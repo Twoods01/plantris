@@ -1,0 +1,60 @@
+.react-grid-item {
+    border: black;
+    border-width: thin;
+    border-style: solid;
+    text-align: center;
+}
+
+.react-grid-layout {
+    border: black;
+    border-style: solid;
+}
+
+.grid-container {
+    width: 90%;
+    margin-left: 10%;
+}
+
+.plan-resources {
+    width: 10%;
+    float: left;
+    padding-top: 5px;
+}
+
+.plan-resource {
+    height: 30px;
+    margin-top: 10px;
+    text-align: right;
+    padding-right: 5px;
+}
+
+.add-resource-button {
+    float: right;
+    margin-top: 10px;
+}
+
+.plan-container {
+    width: 90%;
+    margin-left: 5%;
+}
+
+.plan-timeline {
+    width: 90%;
+    margin-left: 10%;
+}
+
+.date-range-picker {
+    margin-left: 35%;
+    margin-top: 10px;
+}
+
+.timeline {
+    width: 100%;
+    text-align: right;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+th {
+    padding-left: 50px;
+}

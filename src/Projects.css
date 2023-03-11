@@ -1,11 +1,15 @@
-.projects-container {
-    display: flex;
-    margin-top: 50px;
+.project-container {
     width: 90%;
     margin-left: 5%
 }
 
-.project-card {
+.projects-container {
+    display: flex;
+    margin-top: 50px;
     width: 90%;
-    margin-left: 10%;
+    margin-left: 10%
+}
+
+.project-card {
+    /* width: 30%; */
 }

@@ -1,19 +1,28 @@
 import "react-grid-layout/css/styles.css"
 import "react-resizable/css/styles.css"
 import "./Plan.css"
-import { Button, DatePicker, Input, Tooltip, Space } from "antd";
-import { CloseCircleTwoTone, PlusOutlined } from '@ant-design/icons';
+import { useState } from 'react';
+import { DatePicker, Space } from "antd";
 import GridLayout, { WidthProvider } from "react-grid-layout";
+import Resources from "./Resources";
 
 const { RangePicker } = DatePicker;
 const WidthGrid = WidthProvider(GridLayout);
 
-function DraggableGrid() {
-    const layout = [
-        { i: "a", x: 0, y: 0, w: 1, h: 1, minH: 1, maxH: 1},
-        { i: "b", x: 1, y: 1, w: 3, h: 1, minH: 1, maxH: 1},
-        { i: "c", x: 4, y: 2, w: 2, h: 1, minH: 1, maxH: 1}
-    ];
+function DraggableGrid(props) {
+    const layout = props.projects.map(project => {
+        return {
+            i: project.id,
+            name: project.name,
+            x: project.x ?? 0,
+            y: project.y ?? 0,
+            w: project.estimate ?? 1,
+            h: 1,
+            minH: 1,
+            maxH: 1
+        }
+    });
+
     return (
         <WidthGrid
             className="grid-container"
@@ -23,7 +32,7 @@ function DraggableGrid() {
             autoSize={true}
             compactType="horizontal"
         >
-            {layout.map(project => <div key={project.i}>{project.i} - {project.w}</div>)}
+            {layout.map(project => <div key={project.i}>{project.name}</div>)}
         </WidthGrid>
     );
 }
@@ -45,29 +54,36 @@ function Timeline() {
     )
 }
 
-function Resources() {
-    const resources = ["A", "B", "C"]
-    return (
-        <div className="plan-resources">
-            {resources.map(resource => 
-                <div className="plan-resource" key={resource}>
-                    <Input prefix={<CloseCircleTwoTone twoToneColor="#FF0000"/>} bordered={false} value={resource} />
-                </div>)
-            }
-            <Tooltip placement="left" title="Add Resource">
-                <Button className="add-resource-button" tooltip={<div></div>} type="primary" shape="circle" icon={<PlusOutlined />} />
-            </Tooltip>
-        </div>
-    )
-}
+function Plan(props) {
+    const [resources, setResources] = useState(["1", "2", "3"]);
 
-function Plan() {
+    function addResource() {
+        return setResources(resources.concat(resources.length + 1));
+    }
+
+    function removeResource() {
+        const index = resources.indexOf(this);
+        return setResources(resources.slice(0, index).concat(resources.slice(index + 1)));
+    }
+
+    function renameResource(e) {        
+        const index = resources.indexOf(this);
+        return setResources(resources.slice(0, index).concat(e.target.value, resources.slice(index + 1)));
+    }
+
     return (
         <div className="plan-container">
             {Timeline()}
             <div>
-                {Resources()}
-                {DraggableGrid()}
+                <Resources
+                    resources={resources}
+                    addResource={addResource}
+                    removeResource={removeResource}
+                    rename={renameResource}
+                />
+                <DraggableGrid
+                    projects={props.projects}
+                />
             </div>
         </div>
     )

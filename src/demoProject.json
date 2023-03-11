@@ -1,0 +1,42 @@
+{
+    "resources": [{
+        "id": "r1",
+        "name": "Jim" 
+    }, {
+        "id": "r2",
+        "name": "Jane"
+    }, {
+        "id": "r3",
+        "name": "John"
+    }],
+    "projects": [{
+        "id": "p1",
+        "name": "Demo Project",
+        "description": "This project plan showcases how to use this site. Use the action button to clear the demo and start your own plan!",
+        "estimate": 4,
+        "dueDate": "2023-03-01"
+    }, {
+        "id": "p2",
+        "name": "Build the Confabulator",
+        "description": "This one's going to be tough...",
+        "estimate": 12,
+        "dueDate": "2023-03-30"
+    }, {
+        "id": "p3",
+        "name": "Gain alignment",
+        "description": "Is it even possible?",
+        "estimate": 8,
+        "dueDate": "2023-02-01"
+    }, {
+        "id": "p4",
+        "name": "Identify the Transducer",
+        "description": "I think it's right over there",
+        "estimate": 6,
+        "dueDate": "2023-01-31"
+    }],
+    "settings": {
+        "timeRange": ["2023-01-01", "2023-03-30"],
+        "period": "weeks",
+        "isDemo": true
+    }
+}

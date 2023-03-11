@@ -1,19 +1,38 @@
-import { Button, Input, Tooltip } from "antd";
-import { CloseCircleTwoTone, PlusOutlined } from '@ant-design/icons';
+import { Input, Form } from "antd";
+import { CloseCircleTwoTone } from '@ant-design/icons';
 
 function Resources(props) {
     return (
         <div className="plan-resources">
             {props.resources.map(resource =>
-                <div className="plan-resource" key={resource}>
-                    <Input prefix={<CloseCircleTwoTone onClick={props.removeResource.bind(resource)} twoToneColor="#FF0000" />} bordered={false} value={resource} onChange={props.rename.bind(resource)} />
-                </div>)
+                <Resource
+                    key={resource.id}
+                    resource={resource}
+                    removeResource={props.removeResource}
+                    rename={props.rename}
+                />)
             }
-            <Tooltip placement="left" title="Add Resource">
-                <Button onClick={props.addResource} className="add-resource-button" tooltip={<div></div>} type="primary" shape="circle" icon={<PlusOutlined />} />
-            </Tooltip>
         </div>
     )
+}
+
+function Resource(props) {
+    const resource = props.resource;
+
+    return (
+        <Form
+            onValuesChange={props.rename.bind(resource)}
+            className="resource-form"
+            initialValues={resource}
+            layout="inline"
+        >
+            <Form.Item
+                name="name"
+            >
+                <Input prefix={<CloseCircleTwoTone className="remove-resource" onClick={props.removeResource.bind(resource)} twoToneColor="#FF0000" />} className="underlined plan-resource" />
+            </Form.Item>
+        </Form>
+    );
 }
 
 export default Resources;

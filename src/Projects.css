@@ -10,6 +10,10 @@
     margin-left: 10%
 }
 
-.project-card {
-    /* width: 30%; */
+.project-title {
+    margin-top: 15px;
+}
+
+.cancel-project {
+    margin-right: 5px;
 }

@@ -1,13 +1,13 @@
-import { Card, DatePicker, FloatButton, Form, Input, Space } from "antd";
-import { CloseCircleTwoTone, PlusOutlined } from '@ant-design/icons';
+import { Card, DatePicker, Form, Input, Space } from "antd";
+import { CloseCircleTwoTone } from '@ant-design/icons';
+import dayjs from "dayjs";
 import "./Projects.css";
 
 function Projects(props) {
     return (
         <div className="project-container">
-            <FloatButton type="primary" icon={<PlusOutlined />} tooltip={<div>Add Project</div>} onClick={props.addProject} />
             <Space wrap size="middle" className="projects-container">
-                {props.projects.map(project => <Project project={project} onChange={props.updateProject} removeProject={props.removeProject}/>)}
+                {props.projects.map(project => <Project key={project.id} project={project} onChange={props.updateProject} removeProject={props.removeProject}/>)}
             </Space>
         </div>
     );
@@ -15,21 +15,18 @@ function Projects(props) {
 
 function Project(props) {
     const { project, onChange, removeProject } = props;
-    const [form] = Form.useForm();
+    project.dueDate = dayjs(project.dueDate);
     const title = (
         <Form.Item
             name="name"
         >
-            <Input prefix={<CloseCircleTwoTone onClick={removeProject.bind(project)} twoToneColor="#FF0000" />} />
+            <Input prefix={<CloseCircleTwoTone className="cancel-project" onClick={removeProject.bind(project)} twoToneColor="#FF0000" />} className="underlined project-title"/>
         </Form.Item>
     );
 
-    form.setFieldsValue(project);
-
     return (
         <Form 
-            key={project.id}
-            form={form}
+            initialValues={project}
             onValuesChange={onChange.bind(project)}
         >
             <Card title={title} className="project-card">

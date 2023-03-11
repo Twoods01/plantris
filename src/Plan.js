@@ -1,8 +1,8 @@
 import "react-grid-layout/css/styles.css"
 import "react-resizable/css/styles.css"
 import "./Plan.css"
-import { useState } from 'react';
-import { DatePicker, Space } from "antd";
+import dayjs from "dayjs";
+import { DatePicker, Form, Space } from "antd";
 import GridLayout, { WidthProvider } from "react-grid-layout";
 import Resources from "./Resources";
 
@@ -37,12 +37,29 @@ function DraggableGrid(props) {
     );
 }
 
-function Timeline() {
-    const columns = 12;
+function Timeline(props) {
+    const timeRange = props.settings.timeRange.map(dateString => dayjs(dateString));
+    const form = {
+        timeRange
+    }
+    const columns = timeRange[1].diff(timeRange[0], props.settings.period);
+
+    const dateForm = (
+        <Form
+            initialValues={form}
+            onValuesChange={props.timeChanged}
+        >
+            <Form.Item
+                name="timeRange"
+            >
+                <RangePicker picker="month" className="date-range-picker" />
+            </Form.Item>
+        </Form>
+    )
 
     return (
-        <Space className="plan-timeline" direction="vertical" size="middle">
-            <RangePicker picker="month" className="date-range-picker"/>
+        <Space className="plan-timeline" direction="vertical" size="small">
+            {dateForm}
             <table className="timeline">
                 <thead>
                     <tr>
@@ -55,36 +72,21 @@ function Timeline() {
 }
 
 function Plan(props) {
-    const [resources, setResources] = useState(["1", "2", "3"]);
-
-    function addResource() {
-        return setResources(resources.concat(resources.length + 1));
-    }
-
-    function removeResource() {
-        const index = resources.indexOf(this);
-        return setResources(resources.slice(0, index).concat(resources.slice(index + 1)));
-    }
-
-    function renameResource(e) {        
-        const index = resources.indexOf(this);
-        return setResources(resources.slice(0, index).concat(e.target.value, resources.slice(index + 1)));
-    }
-
     return (
         <div className="plan-container">
-            {Timeline()}
-            <div>
-                <Resources
-                    resources={resources}
-                    addResource={addResource}
-                    removeResource={removeResource}
-                    rename={renameResource}
-                />
-                <DraggableGrid
-                    projects={props.projects}
-                />
-            </div>
+            <Timeline
+                settings={props.settings}
+                timeChanged={props.timeChanged}
+            />
+            <Resources
+                resources={props.resources}
+                addResource={props.addResource}
+                removeResource={props.removeResource}
+                rename={props.renameResource}
+            />
+            <DraggableGrid
+                projects={props.projects}
+            />
         </div>
     )
 }

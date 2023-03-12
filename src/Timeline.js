@@ -1,6 +1,6 @@
 import { DatePicker, Form, Space } from "antd";
-import dayjs from "dayjs";
 import { memo } from "react";
+import { getPlanTimeRange, getNumberOfColumns } from "./utils";
 
 const { RangePicker } = DatePicker;
 
@@ -11,11 +11,11 @@ function shouldSkipRender(oldProps, newProps) {
 }
 
 const Timeline = memo(function Timeline(props) {
-    const timeRange = props.settings.timeRange.map(dateString => dayjs(dateString));
+    const timeRange = getPlanTimeRange(props.settings);
     const form = {
         timeRange
     }
-    const columns = timeRange[1].diff(timeRange[0], props.settings.period);
+    const columns = getNumberOfColumns(props.settings);
 
     const dateForm = (
         <Form

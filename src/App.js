@@ -19,8 +19,6 @@ function HomePage(){
     }
 
     function updateProject(changedValues) {
-        console.log("Updating");
-        console.log(this);
         const index = projects.indexOf(this);
         const project = {
             ...projects[index], 

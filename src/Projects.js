@@ -1,7 +1,9 @@
-import { Card, DatePicker, Form, Input, Space, Tooltip } from "antd";
+import { Card, DatePicker, Form, Input, Space, Table, Tooltip } from "antd";
 import { CloseCircleTwoTone, CheckCircleTwoTone, DiffOutlined, WarningTwoTone } from '@ant-design/icons';
 import { v1 } from "uuid";
+import findIndex from "lodash.findindex";
 import dayjs from "dayjs";
+import { getTimeAtGridPosition } from "./utils";
 import "./Projects.css";
 
 function Projects(props) {
@@ -24,7 +26,15 @@ function Projects(props) {
 function getPlannedProjectDuration(project) {
     const splitWidth = (project.splits ?? []).reduce((acc, split) => { return acc + split.w; }, 0);
     return project.w + splitWidth;
-}   
+}  
+
+function getProjectStartDate(project, settings) {
+    return getTimeAtGridPosition(project.x, settings).format("YYYY-MM-DD");
+}
+
+function getProjectEndDate(project, settings) {
+    return getTimeAtGridPosition(project.x + project.w, settings).format("YYYY-MM-DD");
+}
 
 function Project(props) {
     const { project, onChange, removeProject, settings } = props;
@@ -48,6 +58,16 @@ function Project(props) {
             splits
         };
         onChange.call(this, split);
+    }
+
+    function mergeSplit() {
+        const splitIndex = findIndex((project.splits ?? []), {id: this.id});
+
+        const changes = {
+            w: project.w + project.splits[splitIndex].w,
+            splits: project.splits.slice(0, splitIndex).concat(project.splits.slice(splitIndex + 1))
+        };
+        onChange.call(project, changes);
     }
 
     const title = (
@@ -86,6 +106,40 @@ function Project(props) {
         <Tooltip title="Delete Project"><CloseCircleTwoTone key="close" className="cancel-project" onClick={removeProject.bind(project)} twoToneColor="#FF0000" /></Tooltip>
     ];
 
+    const data = [{
+        key: `${project.id}`,
+        plan: `${getProjectStartDate(project, settings)} - ${getProjectEndDate(project, settings)}`
+    }];
+    (project.splits ?? []).forEach(split => {
+        data.push({
+            id: split.id,
+            key: `${split.id}`,
+            plan: `${getProjectStartDate(split, settings)} - ${getProjectEndDate(split, settings)}`
+        });
+    })
+    const columns = [{
+        title: 'Planned',
+        dataIndex: 'plan',
+        key: 'plan',
+        render: (plan, project, i) => {
+            return (
+                <div>
+                    {plan} 
+                    {i > 0 ? <CloseCircleTwoTone key="close" className="merge-split" onClick={mergeSplit.bind(project)} twoToneColor="#FF0000" /> : null}
+                </div>
+            )
+        }
+    }];
+    const timeline = (
+        <Table
+            bordered
+            size="small"
+            columns={columns}
+            dataSource={data}
+            pagination={false}
+        />
+    );
+
     return (
         <Form 
             initialValues={project}
@@ -121,6 +175,7 @@ function Project(props) {
                         <DatePicker />
                     </Form.Item>
                 </Space>
+                {timeline}
             </Card>
         </Form>
     );

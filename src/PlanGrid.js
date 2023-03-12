@@ -1,8 +1,8 @@
-import dayjs from "dayjs";
 import isEqual from "lodash.isequal";
 import flatten from "lodash.flatten";
 import { memo } from "react";
 import GridLayout, { WidthProvider } from "react-grid-layout";
+import { getNumberOfColumns } from "./utils";
 
 const WidthGrid = WidthProvider(GridLayout);
 const RELEVANT_PROJECT_FIELDS = ["name", "x", "y", "w", "splits"];
@@ -89,8 +89,7 @@ const PlanGrid = memo(function PlanGrid(props) {
         return [buildLayout(project)].concat(splits);
     }));
 
-    const timeRange = props.settings.timeRange.map(dateString => dayjs(dateString));
-    const columns = timeRange[1].diff(timeRange[0], props.settings.period);
+    const columns = getNumberOfColumns(props.settings);
 
     return (
         <WidthGrid

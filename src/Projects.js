@@ -7,14 +7,21 @@ function Projects(props) {
     return (
         <div className="project-container">
             <Space wrap size="middle" className="projects-container">
-                {props.projects.map(project => <Project key={project.id} project={project} onChange={props.updateProject} removeProject={props.removeProject}/>)}
+                {props.projects.map(project => 
+                    <Project 
+                        key={project.id} 
+                        project={project} 
+                        settings={props.settings}
+                        onChange={props.updateProject} 
+                        removeProject={props.removeProject}
+                    />)}
             </Space>
         </div>
     );
 }
 
 function Project(props) {
-    const { project, onChange, removeProject } = props;
+    const { project, onChange, removeProject, settings } = props;
     project.dueDate = dayjs(project.dueDate);
     const title = (
         <Form.Item
@@ -40,7 +47,7 @@ function Project(props) {
                     name="estimate"
                     label="Estimate:"
                 >
-                    <Input addonAfter="weeks" />
+                    <Input addonAfter={settings.period} />
                 </Form.Item>
                 <Form.Item
                     name="dueDate"

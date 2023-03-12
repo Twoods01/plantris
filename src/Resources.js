@@ -1,7 +1,13 @@
 import { Input, Form } from "antd";
 import { CloseCircleTwoTone } from '@ant-design/icons';
+import { memo } from "react";
+import isEqual from "lodash.isequal";
 
-function Resources(props) {
+function shouldSkipRender(oldProps, newProps) {
+    return isEqual(oldProps.resources, newProps.resources);
+}
+
+const Resources = memo(function Resources(props) {
     return (
         <div className="plan-resources">
             {props.resources.map(resource =>
@@ -14,7 +20,7 @@ function Resources(props) {
             }
         </div>
     )
-}
+}, shouldSkipRender)
 
 function Resource(props) {
     const resource = props.resource;
@@ -34,5 +40,7 @@ function Resource(props) {
         </Form>
     );
 }
+
+
 
 export default Resources;

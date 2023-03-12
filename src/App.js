@@ -13,14 +13,18 @@ function HomePage(){
     const [projects, setProjects] = useState(STATE.projects);
     const [resources, setResources] = useState(STATE.resources);
     const [settings, setSettings] = useState(STATE.settings);
+
     function addProject() {
         setProjects(projects.concat({ id: v1()}));
     }
 
     function updateProject(changedValues) {
         const index = projects.indexOf(this);
-        const project = projects[index];
-        Object.assign(project, changedValues);
+        const project = {
+            ...projects[index], 
+            ...changedValues
+        };
+
         setProjects(projects.slice(0, index).concat(project, projects.slice(index + 1)));
     }
 
@@ -30,14 +34,14 @@ function HomePage(){
     }
 
     function updateTimeRange(changedValues) {
-        console.log("Updating?");
-        console.log(changedValues);
-        const startTime = changedValues[0].format("YYYY-MM-DD");
-        const endTime = changedValues[1].format("YYYY-MM-DD");
-        setSettings(Object.assign(settings, {timeRange: [
-            startTime,
-            endTime
-        ]}))
+        const startTime = changedValues.timeRange[0].format("YYYY-MM-DD");
+        const endTime = changedValues.timeRange[1].format("YYYY-MM-DD");
+        setSettings(Object.assign({}, settings, {
+            timeRange: [
+                startTime,
+                endTime
+            ]
+        }));
     }
 
     function addResource() {
@@ -55,8 +59,10 @@ function HomePage(){
 
     function renameResource(changedValues) {
         const index = resources.indexOf(this);
-        const resource = resources[index];
-        Object.assign(resource, changedValues);
+        const resource = {
+            ...resources[index],
+            ...changedValues
+        };
         return setResources(resources.slice(0, index).concat(resource, resources.slice(index + 1)));
     }
 
@@ -89,10 +95,10 @@ function HomePage(){
             />
             <Projects
                 projects={projects}
+                settings={settings}
                 updateProject={updateProject}
                 removeProject={removeProject}
             />
-
             <FloatButton.Group
                 trigger="hover"
                 type="primary"

@@ -90,6 +90,8 @@ function Project(props) {
         <Form 
             initialValues={project}
             onValuesChange={onChange.bind(project)}
+            layout="vertical"
+            size="small"
         >
             <Card 
                 title={title} 
@@ -103,18 +105,22 @@ function Project(props) {
                 >
                     <Input.TextArea rows={4} />
                 </Form.Item>
-                <Form.Item
-                    name="estimate"
-                    label="Estimate:"
+                <Space
                 >
-                    <Input addonAfter={settings.period} type="number" />
-                </Form.Item>
-                <Form.Item
-                    name="dueDate"
-                    label="Due:"
-                >
-                    <DatePicker/>
-                </Form.Item>
+                    <Form.Item
+                        name="estimate"
+                        label="Estimate:"
+                        className="project-estimate"
+                    >
+                        <Input addonAfter={settings.period} type="number" />
+                    </Form.Item>
+                    <Form.Item
+                        name="dueDate"
+                        label="Due:"
+                    >
+                        <DatePicker />
+                    </Form.Item>
+                </Space>
             </Card>
         </Form>
     );

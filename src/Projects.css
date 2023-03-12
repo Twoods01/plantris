@@ -14,6 +14,14 @@
     margin-top: 15px;
 }
 
+.project-card {
+    width: 260px;
+}
+
+.project-estimate {
+    width: 115px;
+}
+
 .cancel-project {
     margin-right: 5px;
 }

@@ -15,7 +15,7 @@ function HomePage(){
     const [settings, setSettings] = useState(STATE.settings);
 
     function addProject() {
-        setProjects(projects.concat({ id: v1()}));
+        setProjects(projects.concat({ id: v1() }));
     }
 
     function updateProject(changedValues) {

@@ -1,5 +1,6 @@
-import { Card, DatePicker, Form, Input, Space } from "antd";
-import { CloseCircleTwoTone } from '@ant-design/icons';
+import { Card, DatePicker, Form, Input, Space, Tooltip } from "antd";
+import { CloseCircleTwoTone, CheckCircleTwoTone, DiffOutlined, WarningTwoTone } from '@ant-design/icons';
+import { v1 } from "uuid";
 import dayjs from "dayjs";
 import "./Projects.css";
 
@@ -20,23 +21,82 @@ function Projects(props) {
     );
 }
 
+function getPlannedProjectDuration(project) {
+    const splitWidth = (project.splits ?? []).reduce((acc, split) => { return acc + split.w; }, 0);
+    return project.w + splitWidth;
+}   
+
 function Project(props) {
     const { project, onChange, removeProject, settings } = props;
     project.dueDate = dayjs(project.dueDate);
+
+    function splitProject() {
+        const splitSize = Math.ceil(this.w / 2);
+        const splits = this.splits ?? [];
+        let estimate = parseInt(this.estimate);
+        if (isNaN(estimate)) {
+            estimate = this.w;
+        }
+        splits.push({
+            name: this.name,
+            id: v1(),
+            w: estimate - splitSize
+        })
+        const split = {
+            id: this.id,
+            w: splitSize,
+            splits
+        };
+        onChange.call(this, split);
+    }
+
     const title = (
         <Form.Item
             name="name"
         >
-            <Input prefix={<CloseCircleTwoTone className="cancel-project" onClick={removeProject.bind(project)} twoToneColor="#FF0000" />} className="underlined project-title"/>
+            <Input className="underlined project-title"/>
         </Form.Item>
     );
+
+    const warnings = [];
+    //Not full planned
+    const duration = getPlannedProjectDuration(project);
+    if (project.estimate && project.w && duration !== parseInt(project.estimate)) {
+        const descriptor = duration < project.estimate ? "under" : "over"
+        warnings.push(`Project is ${descriptor}planned by ${Math.abs(parseInt(project.estimate) - duration)} ${settings.period}`);
+    }
+    //TODO: Warn if finished after due date
+
+    let status = (
+        <Tooltip title="Project fully planned">
+            <CheckCircleTwoTone style={{ fontSize: "32px", paddingLeft: "5px" }} twoToneColor="#00FF00" />
+        </Tooltip>
+    );
+    if(warnings.length !== 0) {
+        status = (
+            <Tooltip title={warnings.join("/n")}>
+                <WarningTwoTone style={{ fontSize: "32px", paddingLeft: "5px" }} twoToneColor="#e47200" />
+            </Tooltip>
+            
+        );
+    }
+
+    const actionBar = [
+        <Tooltip title="Split Project"><DiffOutlined key="split" onClick={splitProject.bind(project)}/></Tooltip>,
+        <Tooltip title="Delete Project"><CloseCircleTwoTone key="close" className="cancel-project" onClick={removeProject.bind(project)} twoToneColor="#FF0000" /></Tooltip>
+    ];
 
     return (
         <Form 
             initialValues={project}
             onValuesChange={onChange.bind(project)}
         >
-            <Card title={title} className="project-card">
+            <Card 
+                title={title} 
+                className="project-card"
+                extra={status}
+                actions={actionBar}
+            >
                 <Form.Item
                     name="description"
                     label="Description:"
@@ -47,7 +107,7 @@ function Project(props) {
                     name="estimate"
                     label="Estimate:"
                 >
-                    <Input addonAfter={settings.period} />
+                    <Input addonAfter={settings.period} type="number" />
                 </Form.Item>
                 <Form.Item
                     name="dueDate"

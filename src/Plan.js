@@ -20,6 +20,7 @@ function Plan(props) {
             />
             <PlanGrid
                 projects={props.projects}
+                settings={props.settings}
                 updateProjects={props.updateProjects}
             />
         </div>

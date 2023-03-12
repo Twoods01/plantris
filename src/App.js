@@ -19,6 +19,8 @@ function HomePage(){
     }
 
     function updateProject(changedValues) {
+        console.log("Updating");
+        console.log(this);
         const index = projects.indexOf(this);
         const project = {
             ...projects[index], 
@@ -26,6 +28,16 @@ function HomePage(){
         };
 
         setProjects(projects.slice(0, index).concat(project, projects.slice(index + 1)));
+    }
+
+    function updateProjects(changedValues) {
+        setProjects(projects.map(project => {
+            const projectUpdates = changedValues.find(values => values.id === project.id);
+            return {
+                ...project,
+                ...projectUpdates
+            }
+        }));
     }
 
     function removeProject() {
@@ -89,6 +101,7 @@ function HomePage(){
                 projects={projects}
                 resources={resources}
                 settings={settings}
+                updateProjects={updateProjects}
                 timeChanged={updateTimeRange}
                 removeResource={removeResource}
                 renameResource={renameResource}

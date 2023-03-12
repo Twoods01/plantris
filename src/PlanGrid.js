@@ -3,7 +3,7 @@ import { memo } from "react";
 import GridLayout, { WidthProvider } from "react-grid-layout";
 
 const WidthGrid = WidthProvider(GridLayout);
-const RELEVANT_PROJECT_FIELDS = ["name"];
+const RELEVANT_PROJECT_FIELDS = ["name", "x", "y", "w"];
 
 function shouldSkipRender(oldProps, newProps) {
     const hasChanged = newProps.projects.reduce((hasAnyProjectChanged, project, i) => {
@@ -21,13 +21,27 @@ function shouldSkipRender(oldProps, newProps) {
 }
 
 const PlanGrid = memo(function PlanGrid(props) {
+    function layoutChanged(layout) {
+        const changes = layout.map(gridItem => {
+            return {
+                id: gridItem.i,
+                x: gridItem.x,
+                y: gridItem.y,
+                w: gridItem.w
+            };
+        })
+
+        props.updateProjects(changes);
+    }
+
     const layout = props.projects.map(project => {
         return {
             i: project.id,
             name: project.name,
             x: project.x ?? 0,
             y: project.y ?? 0,
-            w: project.estimate ?? 1,
+            w: project.w ?? project.estimate ?? 1,
+            maxW: project.estimate ?? 1,
             h: 1,
             minH: 1,
             maxH: 1
@@ -42,6 +56,7 @@ const PlanGrid = memo(function PlanGrid(props) {
             rowHeight={30}
             autoSize={true}
             compactType="horizontal"
+            onLayoutChange={layoutChanged}
         >
             {layout.map(project => <div key={project.i}>{project.name}</div>)}
         </WidthGrid>

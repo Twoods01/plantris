@@ -8,9 +8,14 @@ import Projects from "./Projects";
 import Plan from "./Plan";
 import demo from "./demoProject.json";
 
-const STATE = demo;
-
 function HomePage(){
+    let STATE;
+    if (window.location.hash) {
+        STATE = JSON.parse(compress.decompressFromBase64(window.location.hash.slice(1)));
+    } else {
+        STATE = demo;
+    }
+
     const [projects, setProjects] = useState(STATE.projects);
     const [resources, setResources] = useState(STATE.resources);
     const [settings, setSettings] = useState(STATE.settings);
@@ -78,15 +83,15 @@ function HomePage(){
         return setResources(resources.slice(0, index).concat(resource, resources.slice(index + 1)));
     }
 
-    async function generateExport() {
+    function generateExport() {
         const state = {
             projects,
             resources,
             settings
         };
         
-        const shrunk = await compress.compressToBase64(JSON.stringify(state));
-        const url = `${window.location.href}#${shrunk}`;
+        const shrunk = compress.compressToBase64(JSON.stringify(state));
+        const url = `${window.location.origin}/#${shrunk}`;
         navigator.clipboard.writeText(url);
         messageApi.open({
             type: 'success',
@@ -131,7 +136,7 @@ function HomePage(){
                 icon={<PlusOutlined />}
             >
                 {STATE.settings.isDemo ? <FloatButton icon={<DeleteOutlined />} tooltip={<div>Clear Demo</div>} onClick={clearDemo} /> : null}
-                <FloatButton icon={<ExportOutlined />} tooltip={<div>Export</div>} onClick={generateExport} />
+                <FloatButton icon={<ExportOutlined />} tooltip={<div>Share</div>} onClick={generateExport} />
                 <FloatButton icon={<UserAddOutlined />} tooltip={<div>Add Resource</div>} onClick={addResource} />
                 <FloatButton icon={<FileAddOutlined />} tooltip={<div>Add Project</div>} onClick={addProject} />
             </FloatButton.Group>

@@ -26,7 +26,13 @@
         "name": "Gain alignment",
         "description": "Is it even possible?",
         "estimate": 8,
-        "dueDate": "2023-02-01"
+        "dueDate": "2023-02-01",
+        "w": 6,
+        "splits": [{
+            "id": "s1",
+            "name": "Gain alignment",
+            "w": 2
+        }]
     }, {
         "id": "p4",
         "name": "Identify the Transducer",

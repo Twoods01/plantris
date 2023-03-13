@@ -54,7 +54,7 @@ function Project(props) {
         splits.push({
             name: this.name,
             id: v1(),
-            w: estimate - splitSize
+            w: this.w - splitSize
         })
         const split = {
             id: this.id,
@@ -185,7 +185,7 @@ function Project(props) {
                         label="Estimate:"
                         className="project-estimate"
                     >
-                        <Input addonAfter={settings.period} type="number" />
+                        <Input addonAfter={settings.period} type="number" min={1} />
                     </Form.Item>
                     <Form.Item
                         name="dueDate"

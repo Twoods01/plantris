@@ -14,7 +14,7 @@
         "name": "Demo Project",
         "description": "This project plan showcases how to use this site. Use the action button to clear the demo and start your own plan!",
         "estimate": 4,
-        "dueDate": "2023-03-01"
+        "dueDate": "2023-03-12"
     }, {
         "id": "p2",
         "name": "Build the Confabulator",
@@ -32,10 +32,10 @@
         "name": "Identify the Transducer",
         "description": "I think it's right over there",
         "estimate": 6,
-        "dueDate": "2023-01-31"
+        "dueDate": "2023-02-28"
     }],
     "settings": {
-        "timeRange": ["2023-01-01", "2023-08-30"],
+        "timeRange": ["2023-01-01", "2023-03-30"],
         "period": "weeks",
         "isDemo": true
     }

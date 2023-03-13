@@ -33,7 +33,11 @@ function getProjectStartDate(project, settings) {
 }
 
 function getProjectEndDate(project, settings) {
-    return getTimeAtGridPosition(project.x + project.w, settings).format("YYYY-MM-DD");
+    let projectEnd = project.x + project.w;
+    (project.splits ?? []).forEach(split => {
+        projectEnd = Math.max(projectEnd, split.x + split.w);
+    });
+    return getTimeAtGridPosition(projectEnd, settings).format("YYYY-MM-DD");
 }
 
 function Project(props) {
@@ -85,7 +89,11 @@ function Project(props) {
         const descriptor = duration < project.estimate ? "under" : "over"
         warnings.push(`Project is ${descriptor}planned by ${Math.abs(parseInt(project.estimate) - duration)} ${settings.period}`);
     }
-    //TODO: Warn if finished after due date
+
+    const endDate = getProjectEndDate(project, settings);
+    if (dayjs(endDate).isAfter(project.dueDate)) {
+        warnings.push(`Project finishes at ${endDate} but is due by ${project.dueDate.format("YYYY-MM-DD")}`);
+    }
 
     let status = (
         <Tooltip title="Project fully planned">
@@ -93,11 +101,22 @@ function Project(props) {
         </Tooltip>
     );
     if(warnings.length !== 0) {
+        const warningTitle = (
+            <>
+                {warnings.map(w => {
+                    return (
+                        <div key={w}>
+                            {w}
+                            <br/>
+                        </div>
+                    );
+                })}
+            </>
+        )
         status = (
-            <Tooltip title={warnings.join("/n")}>
+            <Tooltip title={warningTitle}>
                 <WarningTwoTone style={{ fontSize: "32px", paddingLeft: "5px" }} twoToneColor="#e47200" />
             </Tooltip>
-            
         );
     }
 

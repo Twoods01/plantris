@@ -1,6 +1,6 @@
-import { DatePicker, Form, Space } from "antd";
+import { DatePicker, Form, Tooltip } from "antd";
 import { memo } from "react";
-import { getPlanTimeRange, getNumberOfColumns } from "./utils";
+import { getPlanTimeRange, getNumberOfColumns, getTimeAtGridPosition } from "./utils";
 
 const { RangePicker } = DatePicker;
 
@@ -46,7 +46,15 @@ const Timeline = memo(function Timeline(props) {
             <table style={style} className="timeline">
                 <thead>
                     <tr>
-                        {[...Array(columns).keys()].map(v => <th key={v}>{v + 1}</th>)}
+                        {[...Array(columns).keys()].map(v => {
+                            return (
+                                <th key={v}>
+                                    <Tooltip title={getTimeAtGridPosition(v, props.settings).format("YYYY-MM-DD")}>
+                                        {v + 1}
+                                    </Tooltip>
+                                </th>
+                            );
+                        })}
                     </tr>
                 </thead>
             </table>

@@ -16,6 +16,15 @@ const Timeline = memo(function Timeline(props) {
         timeRange
     }
     const columns = getNumberOfColumns(props.settings);
+    // a bit hacky but we need different margins based on the number of columns to line everything up
+    // because columns with 2 digits take up a little more space
+    let margin = 10;
+    if(columns > 18) {
+        margin = -.75 * columns;
+    };
+    const style = {
+        marginLeft: `${margin}px`
+    };
 
     const dateForm = (
         <Form
@@ -31,16 +40,18 @@ const Timeline = memo(function Timeline(props) {
     )
 
     return (
-        <Space className="plan-timeline" direction="vertical" size="small">
+        // <Space className="plan-timeline" direction="vertical" size="small">
+        <div className="plan-timeline">
             {dateForm}
-            <table className="timeline">
+            <table style={style} className="timeline">
                 <thead>
                     <tr>
                         {[...Array(columns).keys()].map(v => <th key={v}>{v + 1}</th>)}
                     </tr>
                 </thead>
             </table>
-        </Space>
+        </div>
+        // </Space>
     )
 }, shouldSkipRender)
 

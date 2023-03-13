@@ -60,8 +60,7 @@
 .timeline {
     width: 100%;
     text-align: right;
-    margin-left: 10px;
-    margin-right: 10px;
+    table-layout: fixed;
 }
 
 th {

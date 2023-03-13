@@ -5,6 +5,7 @@
 
 .projects-container {
     display: flex;
+    align-items: stretch;
     margin-top: 50px;
     width: 90%;
     margin-left: 10%

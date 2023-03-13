@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { App, ConfigProvider, FloatButton } from 'antd';
-import { DeleteOutlined, FileAddOutlined, PlusOutlined, SettingOutlined, UserAddOutlined } from '@ant-design/icons';
+import { App, ConfigProvider, FloatButton, message } from 'antd';
+import { DeleteOutlined, FileAddOutlined, PlusOutlined, ExportOutlined, UserAddOutlined } from '@ant-design/icons';
 import './App.css';
 import {v1} from "uuid";
+import compress from "lz-string";
 import Projects from "./Projects";
 import Plan from "./Plan";
 import demo from "./demoProject.json";
@@ -13,6 +14,7 @@ function HomePage(){
     const [projects, setProjects] = useState(STATE.projects);
     const [resources, setResources] = useState(STATE.resources);
     const [settings, setSettings] = useState(STATE.settings);
+    const [messageApi, contextHolder] = message.useMessage()
 
     function addProject() {
         setProjects(projects.concat({ id: v1() }));
@@ -76,8 +78,20 @@ function HomePage(){
         return setResources(resources.slice(0, index).concat(resource, resources.slice(index + 1)));
     }
 
-    function showSettings() {
-        console.log("Settings");
+    async function generateExport() {
+        const state = {
+            projects,
+            resources,
+            settings
+        };
+        
+        const shrunk = await compress.compressToBase64(JSON.stringify(state));
+        const url = `${window.location.href}#${shrunk}`;
+        navigator.clipboard.writeText(url);
+        messageApi.open({
+            type: 'success',
+            content: 'Link Copied to Clipboard',
+        });
     }
 
     function clearDemo() {
@@ -95,6 +109,7 @@ function HomePage(){
     return (
         <ConfigProvider>
         <App>
+            {contextHolder}
             <Plan
                 projects={projects}
                 resources={resources}
@@ -115,8 +130,8 @@ function HomePage(){
                 type="primary"
                 icon={<PlusOutlined />}
             >
-                    {STATE.settings.isDemo ? <FloatButton icon={<DeleteOutlined />} tooltip={<div>Clear Demo</div>} onClick={clearDemo} /> : null}
-                <FloatButton icon={<SettingOutlined />} tooltip={<div>Settings</div>} onClick={showSettings} />
+                {STATE.settings.isDemo ? <FloatButton icon={<DeleteOutlined />} tooltip={<div>Clear Demo</div>} onClick={clearDemo} /> : null}
+                <FloatButton icon={<ExportOutlined />} tooltip={<div>Export</div>} onClick={generateExport} />
                 <FloatButton icon={<UserAddOutlined />} tooltip={<div>Add Resource</div>} onClick={addResource} />
                 <FloatButton icon={<FileAddOutlined />} tooltip={<div>Add Project</div>} onClick={addProject} />
             </FloatButton.Group>

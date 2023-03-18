@@ -52,7 +52,7 @@ function HomePage(){
 
     function updateTimeRange(changedValues) {
         const startTime = changedValues.timeRange[0].format("YYYY-MM-DD");
-        const endTime = changedValues.timeRange[1].format("YYYY-MM-DD");
+        const endTime = changedValues.timeRange[1].endOf(settings.timePickerMode).format("YYYY-MM-DD");
         setSettings(Object.assign({}, settings, {
             timeRange: [
                 startTime,

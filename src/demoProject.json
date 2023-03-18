@@ -43,6 +43,7 @@
     "settings": {
         "timeRange": ["2023-01-01", "2023-03-30"],
         "period": "weeks",
+        "timePickerMode": "month",
         "isDemo": true
     }
 }

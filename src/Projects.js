@@ -3,7 +3,7 @@ import { CloseCircleTwoTone, CheckCircleTwoTone, DiffOutlined, WarningTwoTone } 
 import { v1 } from "uuid";
 import findIndex from "lodash.findindex";
 import dayjs from "dayjs";
-import { getTimeAtGridPosition } from "./utils";
+import { getProjectStartDate, getProjectEndDate, getPlanningIssues } from "./utils";
 import "./Projects.css";
 
 function Projects(props) {
@@ -13,7 +13,8 @@ function Projects(props) {
                 {props.projects.map(project => 
                     <Project 
                         key={project.id} 
-                        project={project} 
+                        project={project}
+                        resources={props.resources}
                         settings={props.settings}
                         onChange={props.updateProject} 
                         removeProject={props.removeProject}
@@ -23,25 +24,8 @@ function Projects(props) {
     );
 }
 
-function getPlannedProjectDuration(project) {
-    const splitWidth = (project.splits ?? []).reduce((acc, split) => { return acc + split.w; }, 0);
-    return project.w + splitWidth;
-}  
-
-function getProjectStartDate(project, settings) {
-    return getTimeAtGridPosition(project.x, settings).format("YYYY-MM-DD");
-}
-
-function getProjectEndDate(project, settings) {
-    let projectEnd = project.x + project.w;
-    (project.splits ?? []).forEach(split => {
-        projectEnd = Math.max(projectEnd, split.x + split.w);
-    });
-    return getTimeAtGridPosition(projectEnd, settings).format("YYYY-MM-DD");
-}
-
 function Project(props) {
-    const { project, onChange, removeProject, settings } = props;
+    const { project, onChange, removeProject, resources, settings } = props;
     project.dueDate = dayjs(project.dueDate);
 
     function splitProject() {
@@ -82,24 +66,14 @@ function Project(props) {
         </Form.Item>
     );
 
-    const warnings = [];
-    //Not full planned
-    const duration = getPlannedProjectDuration(project);
-    if (project.estimate && project.w && duration !== parseInt(project.estimate)) {
-        const descriptor = duration < project.estimate ? "under" : "over"
-        warnings.push(`Project is ${descriptor}planned by ${Math.abs(parseInt(project.estimate) - duration)} ${settings.period}`);
-    }
-
-    const endDate = getProjectEndDate(project, settings);
-    if (dayjs(endDate).isAfter(project.dueDate)) {
-        warnings.push(`Project finishes at ${endDate} but is due by ${project.dueDate.format("YYYY-MM-DD")}`);
-    }
+    const warnings = getPlanningIssues(project, settings, resources);
 
     let status = (
         <Tooltip title="Project fully planned">
-            <CheckCircleTwoTone style={{ fontSize: "32px", paddingLeft: "5px" }} twoToneColor="#00FF00" />
+            <CheckCircleTwoTone style={{ fontSize: "32px", paddingLeft: "5px" }} twoToneColor="#3aeb34" />
         </Tooltip>
     );
+
     if(warnings.length !== 0) {
         const warningTitle = (
             <>

@@ -126,6 +126,7 @@ function HomePage(){
             />
             <Projects
                 projects={projects}
+                resources={resources}
                 settings={settings}
                 updateProject={updateProject}
                 removeProject={removeProject}

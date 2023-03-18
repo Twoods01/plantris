@@ -2,10 +2,10 @@ import isEqual from "lodash.isequal";
 import flatten from "lodash.flatten";
 import { memo } from "react";
 import GridLayout, { WidthProvider } from "react-grid-layout";
-import { getNumberOfColumns } from "./utils";
+import { getNumberOfColumns, getPlanningIssues } from "./utils";
 
 const WidthGrid = WidthProvider(GridLayout);
-const RELEVANT_PROJECT_FIELDS = ["name", "x", "y", "w", "splits"];
+const RELEVANT_PROJECT_FIELDS = ["name", "estimate", "splits", "dueDate"];
 
 function shouldSkipRender(oldProps, newProps) {
     const projectsHaveChanged = newProps.projects.reduce((hasAnyProjectChanged, project, i) => {
@@ -19,8 +19,9 @@ function shouldSkipRender(oldProps, newProps) {
         return hasAnyProjectChanged || hasProjectChanged;
     }, false);
     const timeRangeHasChanged = isEqual(newProps.settings.timeRange, oldProps.settings.timeRange);
+    const resourcesHaveChange = isEqual(newProps.resources, oldProps.resources);
 
-    return !projectsHaveChanged && !timeRangeHasChanged;
+    return !projectsHaveChanged && !timeRangeHasChanged && !resourcesHaveChange;
 }
 
 function buildLayout(project) {
@@ -37,7 +38,8 @@ function buildLayout(project) {
         maxW: estimate,
         h: 1,
         minH: 1,
-        maxH: 1
+        maxH: 1,
+        fullyPlanned: false
     };
 }
 
@@ -86,7 +88,13 @@ const PlanGrid = memo(function PlanGrid(props) {
         if(project.splits) {
             splits = project.splits.map(buildLayout) 
         }
-        return [buildLayout(project)].concat(splits);
+        const allProjectSegments = [buildLayout(project)].concat(splits);
+        const fullyPlanned = getPlanningIssues(project, props.settings, props.resources).length === 0;
+        allProjectSegments.forEach(projectSegment => {
+            Object.assign(projectSegment, {fullyPlanned});
+        })
+
+        return allProjectSegments;
     }));
 
     const columns = getNumberOfColumns(props.settings);
@@ -101,7 +109,7 @@ const PlanGrid = memo(function PlanGrid(props) {
             compactType="horizontal"
             onLayoutChange={layoutChanged}
         >
-            {layout.map(project => <div key={project.i}>{project.name}</div>)}
+            {layout.map(project => <div className={project.fullyPlanned ? "grid-item-success" : "grid-item-warning"} key={project.i}>{project.name}</div>)}
         </WidthGrid>
     );
 }, shouldSkipRender);

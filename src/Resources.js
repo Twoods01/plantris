@@ -1,4 +1,4 @@
-import { Input, Form } from "antd";
+import { Input, Form, Space } from "antd";
 import { CloseCircleTwoTone } from '@ant-design/icons';
 import { memo } from "react";
 import isEqual from "lodash.isequal";
@@ -30,13 +30,18 @@ function Resource(props) {
             onValuesChange={props.rename.bind(resource)}
             className="resource-form"
             initialValues={resource}
+            wrapperCol={{ offset: 2 }}
+            size="small"
             layout="inline"
         >
-            <Form.Item
-                name="name"
-            >
-                <Input prefix={<CloseCircleTwoTone className="remove-resource" onClick={props.removeResource.bind(resource)} twoToneColor="#FF0000" />} className="underlined plan-resource" />
-            </Form.Item>
+            <Space>
+                <CloseCircleTwoTone className="remove-resource" onClick={props.removeResource.bind(resource)} twoToneColor="#FF0000" />
+                <Form.Item
+                    name="name"
+                >
+                    <Input className="underlined plan-resource" />
+                </Form.Item>
+            </Space>
         </Form>
     );
 }

@@ -25,13 +25,17 @@
     height: 30px;
     margin-top: 10px;
     text-align: right;
-    padding-right: 5px;
-    width: 65%;
+    width: 100%;
 }
 
-.add-resource-button {
-    float: right;
-    margin-top: 10px;
+.grid-item-success {
+    border-color:#3aeb34;
+    background-color: #3aeb3415;
+}
+
+.grid-item-warning {
+    border-color: #e47200;
+    background-color: #e4720015;
 }
 
 .remove-resource {
@@ -40,6 +44,7 @@
 
 .resource-form {
     margin-bottom: 0px;
+    flex-direction: column;
 }
 
 .plan-container {

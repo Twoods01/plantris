@@ -15,8 +15,8 @@ function getTimeAtGridPosition(x, settings) {
 }
 
 function getPlannedProjectDuration(project) {
-    const splitWidth = (project.splits ?? []).reduce((acc, split) => { return acc + split.w; }, 0);
-    return project.w + splitWidth;
+    const splitWidth = (project.splits ?? []).reduce((acc, split) => { return acc + split.w ?? split.estimate; }, 0);
+    return (project.w ?? project.estimate) + splitWidth;
 }  
 
 function getProjectStartDate(project, settings) {
@@ -61,6 +61,7 @@ function getPlanningIssues(project, settings, resources) {
 export {
     getPlanTimeRange,
     getPlanningIssues,
+    getPlannedProjectDuration,
     getProjectStartDate,
     getProjectEndDate,
     getNumberOfColumns,

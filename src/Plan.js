@@ -9,6 +9,8 @@ function Plan(props) {
     return (
         <div className="plan-container">
             <Timeline
+                projects={props.projects}
+                resources={props.resources}
                 settings={props.settings}
                 timeChanged={props.timeChanged}
             />

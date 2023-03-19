@@ -1,16 +1,9 @@
-import { DatePicker, Form, Tooltip } from "antd";
-import { memo } from "react";
-import { getPlanTimeRange, getNumberOfColumns, getTimeAtGridPosition } from "./utils";
+import { Col, DatePicker, Form, Row, Space, Statistic, Tooltip } from "antd";
+import { getPlannedProjectDuration, getPlanTimeRange, getNumberOfColumns, getTimeAtGridPosition } from "./utils";
 
 const { RangePicker } = DatePicker;
 
-function shouldSkipRender(oldProps, newProps) {
-    const startTimeSame = oldProps.settings.timeRange[0] === newProps.settings.timeRange[0];
-    const endTimeSame = oldProps.settings.timeRange[1] === newProps.settings.timeRange[1];
-    return startTimeSame && endTimeSame;
-}
-
-const Timeline = memo(function Timeline(props) {
+const Timeline = function Timeline(props) {
     const timeRange = getPlanTimeRange(props.settings);
     const form = {
         timeRange
@@ -37,12 +30,36 @@ const Timeline = memo(function Timeline(props) {
                 <RangePicker picker="month" className="date-range-picker" />
             </Form.Item>
         </Form>
-    )
+    );
+
+    const availableTime = columns * props.resources.length;
+    const consumedTime = props.projects.reduce((acc, project) => {
+        return acc + getPlannedProjectDuration(project);
+    }, 0);
+    const consumedStyle = {}
+    if (consumedTime > availableTime) {
+        consumedStyle.color = "#e47200"
+    }
+
+    const globalStats = (
+        <Space size="middle">
+            <Statistic title="Available" value={availableTime} suffix={props.settings.period} />
+            <Statistic title="Consumed" valueStyle={consumedStyle} value={consumedTime} suffix={props.settings.period} />
+        </Space>
+    );
 
     return (
         // <Space className="plan-timeline" direction="vertical" size="small">
         <div className="plan-timeline">
-            {dateForm}
+            <Row>
+                <Col span={18}>
+                    {dateForm}
+                </Col>
+                <Col span={6}>
+                    {globalStats}
+                </Col>
+            </Row>
+            
             <table style={style} className="timeline">
                 <thead>
                     <tr>
@@ -61,7 +78,7 @@ const Timeline = memo(function Timeline(props) {
         </div>
         // </Space>
     )
-}, shouldSkipRender)
+}
 
 
 export default Timeline;

@@ -95,6 +95,9 @@ const PlanGrid = memo(function PlanGrid(props) {
                 fullyPlanned,
                 static: project.static
             });
+            if (!props.settings.constrainProjectByEstimate) {
+                delete projectSegment.maxW;
+            }
         });
 
         return allProjectSegments;

@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import isString from "lodash.isstring";
 
 function getPlanTimeRange(settings) {
     return settings.timeRange.map(dateString => dayjs(dateString));
@@ -48,7 +49,11 @@ function getPlanningIssues(project, settings, resources) {
 
     const endDate = getProjectEndDate(project, settings);
     if (dayjs(endDate).isAfter(project.dueDate)) {
-        warnings.push(`Project finishes at ${endDate} but is due by ${project.dueDate.format("YYYY-MM-DD")}`);
+        let dueDate = project.dueDate;
+        if(!isString(dueDate)){
+            dueDate = dueDate.format("YYYY-MM-DD");
+        }
+        warnings.push(`Project finishes at ${endDate} but is due by ${dueDate}`);
     }
 
     if (notAssignedToResource(project, resources)) {

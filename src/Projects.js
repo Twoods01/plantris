@@ -26,7 +26,9 @@ function Projects(props) {
 
 function Project(props) {
     const { project, onChange, removeProject, resources, settings } = props;
-    project.dueDate = dayjs(project.dueDate);
+    if(project.dueDate) {
+        project.dueDate = dayjs(project.dueDate);
+    }
 
     function splitProject() {
         const splitSize = Math.ceil(this.w / 2);

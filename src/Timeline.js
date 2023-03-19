@@ -65,7 +65,7 @@ const Timeline = function Timeline(props) {
                         {[...Array(columns).keys()].map(v => {
                             return (
                                 <th key={v}>
-                                    <Tooltip title={getTimeAtGridPosition(v, props.settings).format("YYYY-MM-DD")}>
+                                    <Tooltip title={getTimeAtGridPosition(v, props.settings).endOf(props.settings.period).format("YYYY-MM-DD")}>
                                         {v + 1}
                                     </Tooltip>
                                 </th>

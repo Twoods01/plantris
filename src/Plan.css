@@ -68,14 +68,14 @@
     table-layout: fixed;
 }
 
+.timeline th {
+    padding-left: 50px;
+}
+
 .overconsumed {
     color: #e47200;
 }
 
 .underconsumed {
     color: #3aeb34;
-}
-
-th {
-    padding-left: 50px;
 }

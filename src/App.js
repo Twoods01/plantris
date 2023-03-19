@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { App, ConfigProvider, FloatButton, message, Modal } from 'antd';
+import { App, ConfigProvider, FloatButton, message } from 'antd';
 import { DeleteOutlined, FileAddOutlined, PlusOutlined, ExportOutlined, SettingOutlined, UserAddOutlined } from '@ant-design/icons';
 import Cookie from 'js-cookie'
 import './App.css';
@@ -18,7 +18,7 @@ function HomePage(){
     if (window.location.hash) {
         STATE = JSON.parse(compress.decompressFromBase64(window.location.hash.slice(1)));
         // When loading from link don't save by default 
-        // TODO show warning to user about this behavior
+        // TODO: warn users about this behavior
         STATE.settings.shouldSave = false;
         window.location.hash = "";
     } else if (Cookie.get(COOKIE_STATE)) {

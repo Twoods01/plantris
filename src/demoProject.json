@@ -12,36 +12,47 @@
     "projects": [{
         "id": "p1",
         "name": "Demo Project",
-        "description": "This project plan showcases how to use this site. Use the action button to clear the demo and start your own plan!",
+        "description": "This project plan showcases how to use this site.",
         "estimate": 4,
+        "x": 3,
+        "y": 0,
         "dueDate": "2023-03-12"
     }, {
         "id": "p2",
-        "name": "Build the Confabulator",
-        "description": "This one's going to be tough...",
-        "estimate": 12,
-        "dueDate": "2023-03-30"
-    }, {
-        "id": "p3",
         "name": "Gain alignment",
-        "description": "Is it even possible?",
+        "description": "This project has been locked so it can't be moved. It is also split across multiple resources.",
         "estimate": 8,
-        "dueDate": "2023-02-01",
-        "w": 6,
+        "dueDate": "2023-02-08",
+        "w": 5,
+        "x": 0,
+        "y": 1,
+        "static": true,
         "splits": [{
             "id": "s1",
             "name": "Gain alignment",
-            "w": 2
+            "w": 3,
+            "x": 0,
+            "y": 0
         }]
     }, {
-        "id": "p4",
+        "id": "p3",
         "name": "Identify the Transducer",
-        "description": "I think it's right over there",
+        "description": "Try dragging this project on the timeline to swap its location with Demo Project. This will create a valid plan.",
         "estimate": 6,
-        "dueDate": "2023-02-28"
+        "dueDate": "2023-03-05",
+        "x": 5,
+        "y": 1
+    }, {
+        "id": "p4",
+        "name": "Build the Confabulator",
+        "description": "When you're done with this demo use the action button to clear the demo and start your own plan!",
+        "estimate": 12,
+        "x": 0,
+        "y": 2,
+        "dueDate": "2023-03-30"
     }],
     "settings": {
-        "timeRange": ["2023-01-01", "2023-03-30"],
+        "timeRange": ["2023-01-01", "2023-03-31"],
         "period": "weeks",
         "timePickerMode": "month",
         "constrainProjectByEstimate": true,

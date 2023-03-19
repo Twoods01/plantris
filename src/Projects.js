@@ -95,7 +95,7 @@ function Project(props) {
                     );
                 })}
             </>
-        )
+        );
         status = (
             <Tooltip title={warningTitle}>
                 <WarningTwoTone style={{ fontSize: "32px", paddingLeft: "5px" }} twoToneColor="#e47200" />
@@ -165,8 +165,7 @@ function Project(props) {
                 >
                     <Input.TextArea rows={4} />
                 </Form.Item>
-                <Space
-                >
+                <Space>
                     <Form.Item
                         name="estimate"
                         label="Estimate:"

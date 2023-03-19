@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import isNil from "lodash.isnil";
 import isString from "lodash.isstring";
 
 function getPlanTimeRange(settings) {
@@ -48,7 +49,7 @@ function getPlanningIssues(project, settings, resources) {
     }
 
     const endDate = getProjectEndDate(project, settings);
-    if (dayjs(endDate).isAfter(project.dueDate)) {
+    if (!isNil(project.dueDate) && dayjs(endDate).isAfter(project.dueDate)) {
         let dueDate = project.dueDate;
         if(!isString(dueDate)){
             dueDate = dueDate.format("YYYY-MM-DD");

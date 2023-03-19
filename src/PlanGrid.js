@@ -1,4 +1,5 @@
 import isEqual from "lodash.isequal";
+import isNil from "lodash.isnil";
 import flatten from "lodash.flatten";
 import { memo } from "react";
 import GridLayout, { WidthProvider } from "react-grid-layout";
@@ -24,17 +25,94 @@ function shouldSkipRender(oldProps, newProps) {
     return !projectsHaveChanged && !timeRangeHasChanged && !resourcesHaveChange;
 }
 
-function buildLayout(project) {
+function fillRow(project, grid, settings) {
+    if (isNil(grid[project.y])) {
+        grid[project.y] = new Array(getNumberOfColumns(settings));
+    }
+
+    const row = grid[project.y];
+
+    for (let i = project.x; i < project.x + project.w; i++) {
+        row[i] = 1;
+    }
+}
+
+function findOptimalPosition(project, duration = 1, projects, resources, settings) {
+    const position = {
+        x: 0,
+        y: 0,
+        w: duration
+    }
+
+    const grid = new Array(resources.length);
+    projects.forEach(project => {
+        if(!isNil(project.x) && !isNil(project.y) && !isNil(project.w)) {
+            fillRow(project, grid, settings);
+            (project.splits ?? []).forEach(split => {
+                fillRow(split, grid, settings);
+            });
+        }
+    });
+
+    let positionFound = false;
+    for(let y = 0; y < grid.length; y++) {
+        const row = grid[y];
+        let locationStart;
+        for(let x = 0; x < row.length; x++) {
+            if (isNil(row[x])) {
+                if (isNil(locationStart)) {
+                    locationStart = x;
+                } else if (x - locationStart === duration) {
+                    position.x = locationStart;
+                    position.y = y;
+                    positionFound = true;
+                    break;
+                }
+            } else if(!isNil(locationStart)) {
+                locationStart = undefined;
+            }
+        }
+
+        if (!isNil(locationStart) && row.length - locationStart === duration) {
+            position.x = locationStart;
+            position.y = y;
+            positionFound = true;
+        }
+
+        locationStart = undefined;
+
+        if (positionFound) {
+            break;
+        }
+    }
+
+    if (!positionFound) {
+        position.x = 0;
+        position.y = grid.length;
+    }
+
+
+    return position;
+}
+
+function buildLayout(project, projects, resources, settings) {
     let estimate = parseInt(project.estimate);
     if (isNaN(estimate)) {
         estimate = undefined
     }
+    const duration = project.w ?? estimate;
+
+    const defaults = { };
+    if (isNil(project.x)) {
+        Object.assign(defaults, findOptimalPosition(project, duration, projects, resources, settings));
+    }
+
     return {
         i: project.id,
         name: project.name,
-        x: project.x ?? 0,
-        y: project.y ?? 0,
-        w: project.w ?? estimate ?? 1,
+        x: project.x ?? defaults.x,
+        y: project.y ?? defaults.y,
+        w: duration ?? defaults.w,
         maxW: estimate,
         h: 1,
         minH: 1,
@@ -86,9 +164,9 @@ const PlanGrid = memo(function PlanGrid(props) {
     const layout = flatten(props.projects.map(project => {
         let splits = [];
         if(project.splits) {
-            splits = project.splits.map(buildLayout);
+            splits = project.splits.map(split => buildLayout(split, props.projects, props.resources, props.settings));
         }
-        const allProjectSegments = [buildLayout(project)].concat(splits);
+        const allProjectSegments = [buildLayout(project, props.projects, props.resources, props.settings)].concat(splits);
         const fullyPlanned = getPlanningIssues(project, props.settings, props.resources).length === 0;
         allProjectSegments.forEach(projectSegment => {
             Object.assign(projectSegment, {

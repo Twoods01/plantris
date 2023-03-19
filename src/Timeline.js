@@ -49,7 +49,6 @@ const Timeline = function Timeline(props) {
     );
 
     return (
-        // <Space className="plan-timeline" direction="vertical" size="small">
         <div className="plan-timeline">
             <Row>
                 <Col span={18}>

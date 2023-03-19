@@ -5,7 +5,7 @@ import GridLayout, { WidthProvider } from "react-grid-layout";
 import { getNumberOfColumns, getPlanningIssues } from "./utils";
 
 const WidthGrid = WidthProvider(GridLayout);
-const RELEVANT_PROJECT_FIELDS = ["name", "estimate", "splits", "dueDate"];
+const RELEVANT_PROJECT_FIELDS = ["name", "estimate", "splits", "dueDate", "static"];
 
 function shouldSkipRender(oldProps, newProps) {
     const projectsHaveChanged = newProps.projects.reduce((hasAnyProjectChanged, project, i) => {
@@ -86,13 +86,16 @@ const PlanGrid = memo(function PlanGrid(props) {
     const layout = flatten(props.projects.map(project => {
         let splits = [];
         if(project.splits) {
-            splits = project.splits.map(buildLayout) 
+            splits = project.splits.map(buildLayout);
         }
         const allProjectSegments = [buildLayout(project)].concat(splits);
         const fullyPlanned = getPlanningIssues(project, props.settings, props.resources).length === 0;
         allProjectSegments.forEach(projectSegment => {
-            Object.assign(projectSegment, {fullyPlanned});
-        })
+            Object.assign(projectSegment, {
+                fullyPlanned,
+                static: project.static
+            });
+        });
 
         return allProjectSegments;
     }));
@@ -109,7 +112,20 @@ const PlanGrid = memo(function PlanGrid(props) {
             compactType="horizontal"
             onLayoutChange={layoutChanged}
         >
-            {layout.map(project => <div className={project.fullyPlanned ? "grid-item-success" : "grid-item-warning"} key={project.i}>{project.name}</div>)}
+            {layout.map(project => {
+                const classes = [];
+                if (project.fullyPlanned) {
+                    classes.push("grid-item-success");
+                } else {
+                    classes.push("grid-item-warning");
+                }
+
+                if(project.static) {
+                    classes.push("locked");
+                }
+
+                return <div className={classes.join(" ")} key={project.i}>{project.name}</div>
+            })}
         </WidthGrid>
     );
 }, shouldSkipRender);

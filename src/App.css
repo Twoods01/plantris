@@ -2,6 +2,10 @@
   text-align: center;
 }
 
+.locked {
+  outline: auto;
+}
+
 .underlined {
   border-left-style: hidden;
   border-top-style: hidden;

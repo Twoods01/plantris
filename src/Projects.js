@@ -1,5 +1,5 @@
 import { Card, DatePicker, Form, Input, Space, Table, Tooltip } from "antd";
-import { CloseCircleTwoTone, CheckCircleTwoTone, DiffOutlined, WarningTwoTone } from '@ant-design/icons';
+import { CloseCircleTwoTone, CheckCircleTwoTone, DiffOutlined, LockOutlined, UnlockOutlined, WarningTwoTone } from '@ant-design/icons';
 import { v1 } from "uuid";
 import findIndex from "lodash.findindex";
 import dayjs from "dayjs";
@@ -58,6 +58,13 @@ function Project(props) {
         onChange.call(project, changes);
     }
 
+    function lockProject() {
+        onChange.call(this, {
+            id: this.id,
+            static: !this.static
+        });
+    }
+
     const title = (
         <Form.Item
             name="name"
@@ -94,8 +101,12 @@ function Project(props) {
         );
     }
 
+    const lock = project.static ? <UnlockOutlined key="unlock" onClick={lockProject.bind(project)} /> : <LockOutlined key="lock" onClick={lockProject.bind(project)} />;
+    const lockText = project.static ? "Unlock" : "Lock";
+
     const actionBar = [
         <Tooltip title="Split Project"><DiffOutlined key="split" onClick={splitProject.bind(project)}/></Tooltip>,
+        <Tooltip title={lockText + " Project"}>{lock}</Tooltip>,
         <Tooltip title="Delete Project"><CloseCircleTwoTone key="close" className="cancel-project" onClick={removeProject.bind(project)} twoToneColor="#FF0000" /></Tooltip>
     ];
 
@@ -142,7 +153,7 @@ function Project(props) {
         >
             <Card 
                 title={title} 
-                className="project-card"
+                className={`project-card ${project.static ? "locked" : ""}`}
                 extra={status}
                 actions={actionBar}
             >
